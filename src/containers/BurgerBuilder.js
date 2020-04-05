@@ -25,14 +25,13 @@ class BurgerBuilder extends Component{
         purchasable:false,
         purchasing:false
     };
+
     updatePurchaseState(ingredients){
         const sum = Object.values(ingredients).reduce((sum,quantity)=> sum+quantity,0);
         this.setState({purchasable : sum > 0});
         if(sum<1) this.setState({purchasing:false});
-        console.log('Purchase', this.state.purchasable, 'ingredients',ingredients, Object.values(ingredients),'sum',sum)
     }
     addRemoveIngredientHandler = (ingredientType,operationType)=>{
-        console.log('Hey',ingredientType,operationType);
         const oldCount = this.state.ingredients[ingredientType];
         if(oldCount === 0 && operationType === 'REMOVE') return;
         const updatedCount = oldCount + (operationType === 'ADD' ? 1 : -1);
@@ -52,16 +51,25 @@ class BurgerBuilder extends Component{
     purchaseCancelHandler = () =>{
       this.setState({purchasing:false});
     };
+    continueHandler = () => {
+        console.log('OrderPlaced');
+        this.purchaseCancelHandler();
+    };
     render(){
         return (
             <Aux>
                 <Modal show={this.state.purchasing} modalClosed={this.purchaseCancelHandler}>
-                    <OrderSummary ingredients={this.state.ingredients}/>
+                    <OrderSummary
+                        totalPrice = {this.state.totalPrice}
+                        ingredients={this.state.ingredients}
+                        cancelHandler={this.purchaseCancelHandler}
+                        continueHandler = {this.continueHandler}
+                    />
                 </Modal>
                 <Burger ingredients={this.state.ingredients}/>
                 <BuildControls purchase = {this.purchaseHandler} clicked = {this.addRemoveIngredientHandler} price={this.state.totalPrice} purchasable={this.state.purchasable}/>
             </Aux>
-        )
+        );
     }
 }
 
