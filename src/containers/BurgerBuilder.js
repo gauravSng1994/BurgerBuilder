@@ -19,22 +19,34 @@ class BurgerBuilder extends Component{
             cheese:0,
             meat:0
         },
-        totalPrice:20
+        totalPrice:20,
+        purchasable:false,
     };
-
-    addIngredientHandler = (type)=>{
-        const oldCount = this.state.ingredients[type];
-        const updatedCount = oldCount + 1;
+    updatePurchaseState(ingredients){
+        const sum = Object.values(ingredients).reduce((sum,quantity)=> sum+quantity,0);
+        this.setState({purchasable : sum > 0});
+        console.log('Purchase', this.state.purchasable, 'ingredients',ingredients, Object.values(ingredients),'sum',sum)
+    }
+    addRemoveIngredientHandler = (ingredientType,operationType)=>{
+        console.log('Hey',ingredientType,operationType);
+        const oldCount = this.state.ingredients[ingredientType];
+        if(oldCount === 0 && operationType === 'REMOVE') return;
+        const updatedCount = oldCount + (operationType === 'ADD' ? 1 : -1);
         const updatedIngredients = {
             ...this.state.ingredients
         };
-        updatedIngredients[type] = updatedCount;
+        updatedIngredients[ingredientType] = updatedCount;
+        const addPrice = operationType === 'ADD' ? INGREDIENT_PRICES[ingredientType] : - INGREDIENT_PRICES[ingredientType];
+        const updatedPrice = this.state.totalPrice + addPrice;
+        this.setState({ingredients:updatedIngredients, totalPrice: updatedPrice});
+        // this.setState((prevState,props) => ({ totalPrice: prevState.totalPrice + addPrice }) );
+        this.updatePurchaseState(updatedIngredients);
     };
     render(){
         return (
             <Aux>
                 <Burger ingredients={this.state.ingredients}/>
-                <BuildControls/>
+                <BuildControls clicked = {this.addRemoveIngredientHandler} price={this.state.totalPrice} purchasable={this.state.purchasable}/>
             </Aux>
         )
     }
