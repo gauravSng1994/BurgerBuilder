@@ -4,7 +4,7 @@ import NavigationItem from './NavigationItem/NavigationItem';
 
 const navigationItems = () => (
     <ul className={classes.NavigationItems}>
-        <NavigationItem link='/' isActive={false} >Burger Builder</NavigationItem>
+        <NavigationItem link='/' isActive={true} >Burger Builder</NavigationItem>
         <NavigationItem link='/' >Checkout</NavigationItem>
     </ul>
 );
